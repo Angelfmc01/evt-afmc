@@ -1,0 +1,21 @@
+import verificarToken from "../utils/jwt.utils.js";
+
+const validarJWT = async(req, res, next) =>{
+    const authHeader = req.headers.authorization
+
+     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(403).json({ error: "El token es requerido" });
+    }
+
+    const token = authHeader.split(" ")[1]
+
+    try{
+        const decodedToken = await verificarToken(token)
+        req.uid = decodedToken.uid
+        next()
+    }catch(err){
+        return res.status(401).json({message: "El token no es valido"})
+    }
+}
+
+export default validarJWT
