@@ -1,0 +1,11 @@
+*.env
+backend/.env
+frontend/.env
+
+node_modules/
+.log
+
+dist/
+build/
+
+package-lock.json

@@ -28,6 +28,8 @@ const historiesModel = db.define('historiales',{
         type: DataTypes.INTEGER(6),
         allowNull: true
     },
+},{
+  timestamps: false  
 })
 
 export default historiesModel
