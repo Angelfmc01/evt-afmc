@@ -29,6 +29,8 @@ const usersModel = db.define("usuarios", {
     type: DataTypes.INTEGER(1),
     allowNull: false,
   },
+}, {
+   timestamps: false 
 });
 
 
