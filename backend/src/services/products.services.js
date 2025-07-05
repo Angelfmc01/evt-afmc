@@ -1,13 +1,28 @@
 import { productsModel } from "../models/relations.js";
+import historiesServices from "./histories.services.js";
 
 const productsService = {
-  getProducts: async (estatus= null) => {
+  getProducts: async (estatus = null) => {
     try {
-        const filtrar = {}
-        if(estatus !== null) filtrar.estatus = estatus
-        
-      const productos = await productsModel.findAll({where: filtrar});
-      return { success: true, data: productos };
+      const filtrar = {};
+      if (estatus !== null) filtrar.estatus = estatus;
+
+      const productos = await productsModel.findAll({ where: filtrar });
+
+      const newProducto = productos.map((item) => ({
+        idProducto: item.idProducto,
+        nombre: item.nombre,
+        precio: Number(item.precio).toLocaleString("es-MX", {
+          style: "currency",
+          currency: "MXN",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }),
+        estatus: item.estatus === 1 ? "Activo" : "Inactivo",
+        cantidad: item.cantidad,
+      }));
+
+      return { success: true, data: newProducto };
     } catch (err) {
       console.error(err);
       return { success: false, message: "Error, intentalo de nuevo" };
@@ -28,9 +43,9 @@ const productsService = {
     }
   },
 
-  updateProducts: async (idProducto, datoActualizar) => {
+  updateProducts: async ( idProducto, datoActualizar) => {
     try {
-      const { cantidad, estatus, operacion } = datoActualizar;
+      const { cantidad, estatus, movimiento, idUsuario } = datoActualizar;
 
       const producto = await productsModel.findByPk(idProducto);
       if (!producto)
@@ -49,13 +64,13 @@ const productsService = {
         if (cantidad < 0) {
           return {
             success: false,
-            message: "La cantidad no es valida",
+            message: "La cantidad no es válida",
           };
         }
 
-        if (operacion === "sumar") {
+        if (movimiento === "Entrada") {
           updateData.cantidad = producto.cantidad + cantidad;
-        } else if (operacion === "restar") {
+        } else if (movimiento === "Salida") {
           if (producto.cantidad - cantidad < 0) {
             return {
               success: false,
@@ -66,17 +81,30 @@ const productsService = {
         } else {
           return {
             success: false,
-            message: "Operación no válida",
+            message: "Movimiento no válido",
           };
         }
       }
+
       if (estatus !== undefined) {
         updateData.estatus = estatus;
       }
 
-      await producto.update(updateData);
-     /*  console.log(producto) */
+      const actualizado = await producto.update(updateData);
+
+      if (actualizado) {
+        if (movimiento && cantidad !== undefined) {
+          await historiesServices.createHistories(
+            idUsuario,
+            idProducto,
+            movimiento,
+            cantidad
+          );
+        }
+      }
+
       return {
+        succes: true,
         message: "Se actualizó correctamente",
       };
     } catch (err) {
