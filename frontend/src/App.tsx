@@ -1,11 +1,19 @@
-import "./App.css";
+import Login from "./pages/Login";
+import Productos from "./pages/Productos";
+import Historial from "./pages/Historial";
 
-function App() {
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+export default function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">PRUEBA DE CAMBIOO</h1>
-    </>
+    <Router >
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/productos" element={<Productos />} />
+        <Route path="/historial" element={<Historial />} />
+         <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
