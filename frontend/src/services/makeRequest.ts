@@ -18,7 +18,7 @@ export const makeRequest = async <T, TData>(
         data,
         responseType,
         headers: {
-            Authorization: `Bearer ${getToken()}`,
+        Authorization: `Bearer ${getToken()}`,
         Accept: "application/json",
         }
     }

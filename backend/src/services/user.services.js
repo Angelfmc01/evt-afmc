@@ -11,9 +11,9 @@ const userServices = {
         const validarContraseña = await bcrypt.compare(contrasena, user.contrasena)
         if(!validarContraseña) return {succes: false, messgae: "Contraseña incorrecta"}
 
-        const token = jwt.sign({id: user.idUsuario, correo: user.correo, rol: user. idRol}, process.env.JWT_SECRET, {expiresIn: "1h"})
+        const token = jwt.sign({idUsuario: user.idUsuario, correo: user.correo, rol: user.idRol, nombre: user.nombre}, process.env.JWT_SECRET, {expiresIn: "1h"})
 
-        return{ success: true, token, user: {nombre: user.nombre, rol: user.idRol}}
+        return{ success: true, token, user: {nombre: user.nombre, rol: user.idRol, correo: user.correo, idUsuario: user.idUsuario}}
         
         
     }

@@ -6,8 +6,8 @@ import validateJWT from "../middleware/jwt.middleware.js";
 
 const router = Router();
 
-router.use("/products", /* validateJWT, */ productsRouter);
-router.use("/histories",/* , validateJWT, */ historiesRouter);
+router.use("/products", validateJWT, productsRouter);
+router.use("/histories", validateJWT, historiesRouter);
 router.use("/auth", userRouter);
 
 export default router;

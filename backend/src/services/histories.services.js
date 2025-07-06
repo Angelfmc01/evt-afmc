@@ -12,6 +12,7 @@ const historiesServices = {
 
       const historial = await historiesModel.findAll({
         where: filtrar,
+        order: [['idHistorial', 'DESC']],
         include: [
           {
             model: productsModel,

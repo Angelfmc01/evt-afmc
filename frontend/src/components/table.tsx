@@ -24,7 +24,8 @@ const table = <T extends { idProducto?: number; idHistorial?: number }>({
             {columnas.map((columna) => (
               <th
                 key={String(columna.key) || columna.label}
-                className="px-6 py-3 text-center"
+               
+                className={`${columna.className ?? ""} px-6 py-3 text-center`}
               >
                 {columna.label}
               </th>
@@ -41,7 +42,7 @@ const table = <T extends { idProducto?: number; idHistorial?: number }>({
               {columnas.map((columna) => (
                 <td
                   key={String(columna.key) || columna.label}
-                  className="px-6 py-4 font-semibold text-gray-900 dark:text-white text-center"
+                  className={`${columna.className ?? ""} px-6 py-4 font-semibold text-gray-900 dark:text-white text-center`}
                 >
                   {columna.render
                     ? columna.render(row)
