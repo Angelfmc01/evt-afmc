@@ -31,14 +31,14 @@ const productsService = {
 
   createProduct: async (nombre, precio, estatus) => {
     try {
+      if(!nombre || !precio || !estatus) return { success: false};
       const newProduct = await productsModel.create({
         nombre,
         precio,
         estatus,
       });
-      return { success: true, data: newProduct };
+      return { success: true, data: newProduct, message: "Producto creado correctamente" };
     } catch (err) {
-      console.log(err);
       return { success: false, message: "Error, intentalo de nuevo" };
     }
   },
