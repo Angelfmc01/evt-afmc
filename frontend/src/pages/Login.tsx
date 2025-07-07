@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../auth/authConextHook";
 import FormLogin from "../components/formLogin";
 import { loginUser } from "../services/usersAPI";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface LoginData {
   correo: string;
@@ -11,6 +11,7 @@ interface LoginData {
 
 const Login = () => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("")
   const { isAuthenticated, login } = useAuthContext();
 
   useEffect(() => {
@@ -20,14 +21,13 @@ const Login = () => {
   }, [isAuthenticated, navigate]);
 
   const handleLogin = async (data: LoginData) => {
-    
     try {
       const result = await loginUser(data);
       if (result?.success && result.token) {
-        sessionStorage.setItem("token", result.token);
+        sessionStorage.setItem("token", result.token)
         login(result.token); 
       } else {
-        console.error("Error en la respuesta del servidor:", result?.message);
+        setErrorMessage(result?.message || "Error al iniciar sesion")
       }
     } catch (err) {
       console.error("Error en la solicitud:", err);
@@ -40,7 +40,7 @@ const Login = () => {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Login
         </h1>
-        <FormLogin onLogin={handleLogin} />
+        <FormLogin onLogin={handleLogin} error={errorMessage} />
       </div>
     </div>
   );

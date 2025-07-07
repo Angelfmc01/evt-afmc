@@ -4,7 +4,7 @@ import { createProductos, type NewProductos } from "../services/productsAPI";
 interface ModalCreateProductProps {
   isOpen: boolean;
   onClose: () => void;
-  onProductCreated: () => void;
+  onProductCreated: (success: boolean, message: string) => void;
 }
 
 const ModalCreateProduct = ({
@@ -35,8 +35,16 @@ const ModalCreateProduct = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createProductos(newProduct);
-      onProductCreated();
+      const response = await createProductos(newProduct);
+      if (!response?.success) {
+        onProductCreated(false, "Todos los campos son requeridos");
+        return;
+      }
+      
+      onProductCreated(
+        response.success,
+        response.message || "Producto creado correctamente"
+      );
     } catch (error) {
       console.error("Error al crear producto:", error);
     }
@@ -90,7 +98,7 @@ const ModalCreateProduct = ({
                   onChange={handleChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Nombre del producto"
-                  required
+            
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">

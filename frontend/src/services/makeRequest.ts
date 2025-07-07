@@ -27,7 +27,6 @@ export const makeRequest = async <T, TData>(
     return response.data
 
   } catch (error: unknown) {
-    console.error(`Error en ${method} ${endpoint}:`, error);
     if (axios.isAxiosError(error)) {
       return error.response?.data as T;
     } else {

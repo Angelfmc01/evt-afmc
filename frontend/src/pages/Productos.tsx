@@ -4,6 +4,7 @@ import { getProductos, type Productos } from "../services/productsAPI";
 import { useAuthContext } from "../auth/authConextHook";
 import ModalCreateProduct from "../components/modalCreateProduct";
 import ModalUpdateProduct from "../components/modalUpdateProduct";
+import AlertMessage from "../components/alert";
 
 const ProductosPage = () => {
   const [productos, setProductos] = useState<Productos[]>([]);
@@ -13,11 +14,22 @@ const ProductosPage = () => {
   const [productoSeleccionado, setProductoSeleccionado] =
     useState<Productos | null>(null);
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [success, setSuccess] = useState<boolean>(true);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const mostrarAlerta = (type: boolean, message: string) => {
+    setSuccess(type);
+    setAlertMessage(message);
+    setShowAlert(true);
+    setTimeout(() => setShowAlert(false), 4000);
+  };
+
   const { user } = useAuthContext();
 
   const openModalDialog = (type: string, row?: Productos | null) => {
     setProductoSeleccionado(row || null);
-  /*   console.log(productoSeleccionado); */
+    /*   console.log(productoSeleccionado); */
     setModalType(type);
     setShowModal(true);
   };
@@ -98,12 +110,14 @@ const ProductosPage = () => {
   return (
     <div className="m-5 z-10">
       <div className="mb-4 flex items-center justify-between">
-        <button
-          onClick={() => openModalDialog("Create")}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-sm"
-        >
-          Nuevo Producto
-        </button>
+        {user?.rol === 1 && (
+          <button
+            onClick={() => openModalDialog("Create")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-sm"
+          >
+            Nuevo Producto
+          </button>
+        )}
 
         <div className="flex items-center">
           <span className="font-medium bg-blue-500 rounded-l-2xl px-4 h-10 flex items-center text-white select-none">
@@ -128,42 +142,33 @@ const ProductosPage = () => {
           <ModalCreateProduct
             isOpen={showModal}
             onClose={() => setShowModal(false)}
-            onProductCreated={() => {
+            onProductCreated={(success, message) => {
               setShowModal(false);
               getAllProductos(filtrarProductos);
+              mostrarAlerta(success, message);
             }}
           />
         )}
 
-        {showModal && modalType === "Entrada" && (
+        {(modalType === "Entrada" || modalType === "Salida") && showModal && (
           <ModalUpdateProduct
             isOpen={showModal}
             onClose={() => setShowModal(false)}
             producto={productoSeleccionado}
             rol={user?.rol}
             movimiento={modalType}
-            idUsuario= {user?.idUsuario}
-            onProductCreated={() => {
+            idUsuario={user?.idUsuario}
+            onProductCreated={(success, message) => {
               setShowModal(false);
               getAllProductos(filtrarProductos);
+              mostrarAlerta(success, message);
             }}
           />
         )}
+      </div>
 
-        {showModal && modalType === "Salida" && (
-          <ModalUpdateProduct
-            isOpen={showModal}
-            onClose={() => setShowModal(false)}
-            producto={productoSeleccionado}
-            rol={user?.rol}
-            movimiento={modalType}
-            idUsuario= {user?.idUsuario}
-            onProductCreated={() => {
-              setShowModal(false);
-              getAllProductos(filtrarProductos);
-            }}
-          />
-        )}
+      <div className="fixed bottom-4 right-4 z-50">
+        <AlertMessage show={showAlert} type={success} message={alertMessage} />
       </div>
     </div>
   );

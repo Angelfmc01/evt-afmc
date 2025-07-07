@@ -6,6 +6,7 @@ export interface Productos {
   precio: number;
   estatus: number;
   cantidad: number;
+  
 }
 
 export interface NewProductos {
@@ -13,6 +14,7 @@ export interface NewProductos {
   precio: number;
   estatus: number;
   cantidad: number;
+ 
 }
 
 export interface UpdateProductos {
@@ -25,6 +27,8 @@ export interface UpdateProductos {
 
 interface ApiResponse {
   data: Productos[];
+  message?: string
+  success: boolean
 }
 
 export const getProductos = async (estatus: number | null = null) => {
@@ -52,7 +56,8 @@ export const createProductos = async (newProducto: NewProductos) => {
       "POST",
       newProducto
     );
-    return response.data;
+
+    return {response: response.data, message: response.message, success: response.success,};
   } catch (err) {
     console.log("Error al crear el activo", err);
   }
@@ -66,7 +71,7 @@ export const updateProductos = async (updateProducto: UpdateProductos) => {
       "POST",
       updateProducto
     );
-    return response.data;
+    return {message: response.message, success: response.success,};
   } catch (err) {
     console.log("Error al crear el activo", err);
   }

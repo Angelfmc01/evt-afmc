@@ -8,7 +8,7 @@ import {
 interface ModalCreateProductProps {
   isOpen: boolean;
   onClose: () => void;
-  onProductCreated: () => void;
+  onProductCreated: (success: boolean, message: string) => void;
   producto?: Productos | null;
   rol?: number;
   idUsuario?: number;
@@ -50,37 +50,37 @@ const ModalUpdateProduct = ({
   };
 
   const handleIncrement = () => {
-  setProductoSeleccionado((prev) => {
-    if (rol === 2 && producto) {
-      if (prev.cantidad >= producto.cantidad) {
-        return prev;
+    setProductoSeleccionado((prev) => {
+      if (rol === 2 && producto) {
+        if (prev.cantidad >= producto.cantidad) {
+          return prev;
+        }
       }
-    }
 
-    return {
-      ...prev,
-      cantidad: prev.cantidad + 1,
-    };
-  });
-};
+      return {
+        ...prev,
+        cantidad: prev.cantidad + 1,
+      };
+    });
+  };
 
   const handleDecrement = () => {
-  setProductoSeleccionado((prev) => {
-    if (rol === 1 && producto) {
-      if (prev.cantidad <= producto.cantidad) {
-        return prev; 
+    setProductoSeleccionado((prev) => {
+      if (rol === 1 && producto) {
+        if (prev.cantidad <= producto.cantidad) {
+          return prev;
+        }
+      } else if (rol === 2) {
+        if (prev.cantidad <= 0) {
+          return prev;
+        }
       }
-    } else if (rol === 2) {
-      if (prev.cantidad <= 0) {
-        return prev; 
-      }
-    }
 
-    return {
-      ...prev,
-      cantidad: prev.cantidad - 1,
-    };
-  });
+      return {
+        ...prev,
+        cantidad: prev.cantidad - 1,
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,8 +93,13 @@ const ModalUpdateProduct = ({
         estatus: productoSeleccionado.estatus!,
         movimiento: movimiento,
       };
-      await updateProductos(datosProducto);
-      onProductCreated();
+      const response = await updateProductos(datosProducto);
+ 
+      if (!response?.success) {
+        onProductCreated(false, "Error al acualizar");
+        return;
+      }
+      onProductCreated(response.success, "Producto actualizado correctamente");
     } catch (error) {
       console.error("Error al actualizar producto:", error);
     }
@@ -216,7 +221,7 @@ const ModalUpdateProduct = ({
                       ></path>
                     </svg>
                   </button>
-                    
+
                   <input
                     type="number"
                     name="cantidad"
@@ -230,17 +235,20 @@ const ModalUpdateProduct = ({
                     }
                     className="w-20 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm  p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                     min="0"
-                    
                   />
                   <button
                     type="button"
                     onClick={handleIncrement}
                     className={`w-10 h-10 px-3 py-1 text-white rounded-r-lg ${
-                      rol === 2 && productoSeleccionado.cantidad >= (producto?.cantidad || 0)
+                      rol === 2 &&
+                      productoSeleccionado.cantidad >= (producto?.cantidad || 0)
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-green-500 hover:bg-green-600"
                     }`}
-                    disabled={rol === 2 && productoSeleccionado.cantidad >= (producto?.cantidad || 0)}
+                    disabled={
+                      rol === 2 &&
+                      productoSeleccionado.cantidad >= (producto?.cantidad || 0)
+                    }
                   >
                     <svg
                       className=" w-5 h-5"
