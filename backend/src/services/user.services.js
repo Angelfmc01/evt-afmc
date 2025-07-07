@@ -9,7 +9,7 @@ const userServices = {
         if(!user) return{succes: false, message: "Usuario no encontrado"}
 
         const validarContraseña = await bcrypt.compare(contrasena, user.contrasena)
-        if(!validarContraseña) return {success: false, messgae: "Contraseña incorrecta"}
+        if(!validarContraseña) return {success: false, message: "Contraseña incorrecta"}
 
         const token = jwt.sign({idUsuario: user.idUsuario, correo: user.correo, rol: user.idRol, nombre: user.nombre}, process.env.JWT_SECRET, {expiresIn: "1h"})
 

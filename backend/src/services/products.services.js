@@ -31,7 +31,7 @@ const productsService = {
 
   createProduct: async (nombre, precio, estatus) => {
     try {
-      if(!nombre || !precio || !estatus) return { success: false};
+      if(!nombre || !precio || estatus == null) return { success: false};
       const newProduct = await productsModel.create({
         nombre,
         precio,

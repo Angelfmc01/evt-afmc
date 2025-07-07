@@ -46,12 +46,4 @@ const Login = () => {
   );
 };
 
-{
-  /*   {showAlert && (
-          <div className="fixed bottom-4 right-4 w-full max-w-xs">
-            <AlertDialog message={alertMessage} type={alertType} />
-          </div>
-        )} */
-}
-
 export default Login;

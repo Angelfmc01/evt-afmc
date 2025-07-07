@@ -50,9 +50,11 @@ const handleContrasenaChange = (value: string) => {
   useEffect(() => {
     if (error === "Contraseña incorrecta") {
       setContrasenaError(error);
+      console.log(error)
     }
     if (error === "Usuario no encontrado") {
       setCorreoError(error);
+      console.log(error)
     }
   }, [error]);
 
@@ -68,7 +70,7 @@ const handleContrasenaChange = (value: string) => {
           placeholder="ejm@ept.com"
         />
         <div className="w-6 h-6 flex items-center justify-center absolute right-2 top-1/2 transform -translate-y-1/2">
-          {/*  {correoError && <ExclamationCircleIcon className="w-6 h-6 text-red-500" />} */}
+      
         </div>
         <div className="min-h-[20px]">
           {correoError && (
